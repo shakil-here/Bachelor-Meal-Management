@@ -4,9 +4,13 @@ void LNprint();
 int LeapYearChecker(int a);
 int MonthVAlue(int mvalue, int YearLP);
 void ShowMonthName(int a);
-void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn,int mealsheet[][mealsheetsizeColumn],  int MemberCode[], int MemberCodeSize,int monthsize);
+void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int MemberCode[], int MemberCodeSize, int monthsize);
 void TBLline(int a);
 void TBLheader(int a);
+void Sheetprint();
+int Add_Value_TO_MealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int ValueOfTheDate);
+int Calculation_of_sheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn]);
+
 int main()
 {
     int inpYaer, inpMonth;
@@ -37,13 +41,6 @@ int main()
     int MonthSize = MonthVAlue(inpMonth, inpYaer);
 
     LNprint();
-    // int date[MonthSize + 1];
-    // int dates = 0;
-    // for (int i = 0; i <= MonthSize; i++)
-    // {
-    //     date[i] = dates;
-    //     dates++;
-    // }
     printf("How Many Member Do You Want? \n");
     int NumOfMember, nummemchk = 0;
     scanf("%d", &NumOfMember);
@@ -73,44 +70,10 @@ int main()
     int column = NumOfMember + 1;
     int row = MonthSize + 2;
     int MealSheet[row][column];
-
-    //     int i,j,k;
-    //     for (i = 0; i < row; i++)
-    // {
-    //     for ( j = 0; j <column; j++)
-    //     {
-
-    //                 MealSheet[i][j]=0;
-
-    //     }
-
-    // }
-
-    // for (i = 0; i < row; i++)
-    // {
-    //     for ( j = 0; j <column; j++)
-    //     {
-    //         if (i==0&j>=1)
-    //         {
-    //             for ( k = 0; k <j; k++)
-    //             {
-    //                 MealSheet[i][j]=membercode[k];
-    //             }
-
-    //         }
-    //         if(j==0 && i>=1 && i<=row-1){
-    //             for(int l=0;l<MonthSize;l++){
-    //                 MealSheet[i][j]=date[i];
-    //             }
-    //         }
-
-    //     }
-
-    // }
-    InitMealSheet( row, column,MealSheet, membercode, NumOfMember,MonthSize);
+    InitMealSheet(row, column, MealSheet, membercode, NumOfMember, MonthSize);
+    Calculation_of_sheet(row, column, MealSheet);
 
     TBLline(column);
-    // TBLheader(column);
     printf("|  Date  |-- ID --\n");
     for (int i = 0; i < row; i++)
     {
@@ -127,12 +90,66 @@ int main()
         printf("\n");
     }
     TBLline(column);
-
-    int inpvalmeal;
-    printf("Do You Want To Add Meal??\n");
     TBLline(column);
     printf(" 1) Add Date-wise Value\n");
-    printf(" 2) Exit \n");
+    printf(" 2) Exit\n");
+    TBLline(column);
+    int inpvalmenu;
+    int valmenucheck = 0;
+    scanf("%d", &inpvalmenu);
+    while (valmenucheck != 1)
+    {
+        if (inpvalmenu == 1 || inpvalmenu == 2)
+        {
+            if (inpvalmenu == 2)
+            {
+                break;
+            }
+            else
+            {
+                int checkerYESNO;
+                do
+                {
+
+                    printf("\nEnter Date:\n ");
+                    int valuefordate;
+                    scanf("%d", &valuefordate);
+                    Add_Value_TO_MealSheet(row, column, MealSheet, valuefordate);
+                    Calculation_of_sheet(row, column, MealSheet);
+                    TBLline(column);
+                    printf("|  Date  |-- ID --\n");
+                    for (int i = 0; i < row; i++)
+                    {
+                        TBLline(column);
+                        for (int j = 0; j < column; j++)
+                        {
+                            if (j == 0)
+                            {
+                                printf("|%7d |", MealSheet[i][j]);
+                            }
+                            else
+                                printf("%7d  |", MealSheet[i][j]);
+                        }
+                        printf("\n");
+                    }
+                    TBLline(column);
+                    valmenucheck = 1;
+                    printf("\n Do You want add more?\n");
+                    printf("\n 1) Yes\n");
+                    printf("\n 2) No\n");
+                    scanf("%d", &checkerYESNO);
+
+                } while (checkerYESNO ==1);
+            }
+        }
+        else
+        {
+            int vanishq;
+            printf("Invalid Member Number \nPlease Select a valid member number 1 to 5\n");
+            scanf("%d", &inpvalmenu);
+            scanf("%c", &vanishq);
+        }
+    }
 }
 
 int LeapYearChecker(int a)
@@ -246,63 +263,94 @@ int MonthVAlue(int mvalue, int YearLP)
     }
     return msize;
 }
-void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn,int mealsheet[][mealsheetsizeColumn],  int MemberCode[], int MemberCodeSize,int monthsize)
+void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int MemberCode[], int MemberCodeSize, int monthsize)
 {
-    // int mealsheet[mealsheetsizeRow][mealsheetsizeColumn];
 
-    // int MemberCode[MemberCodeSize];
-
-     int date[monthsize + 1];
+    int date[monthsize + 1];
     int dates = 0;
     for (int i = 0; i <= monthsize; i++)
     {
         date[i] = dates;
         dates++;
     }
-    
 
     int i, j, k;
-    for (i = 0; i <= mealsheetsizeRow; i++)
+    for (i = 0; i < mealsheetsizeRow; i++)
     {
         for (j = 0; j < mealsheetsizeColumn; j++)
         {
 
-          mealsheet[i][j] = 0;
+            mealsheet[i][j] = 0;
         }
     }
-    // int i,j,k;
-    for (i = 0; i <=mealsheetsizeRow; i++)
+    for (i = 0; i < mealsheetsizeRow; i++)
     {
-        for ( j = 0; j <mealsheetsizeColumn; j++)
+        for (j = 0; j < mealsheetsizeColumn; j++)
         {
-            if (i==0&j>=1)
+            if (i == 0 & j >= 1)
             {
-                for ( k = 0; k <j; k++)
+                for (k = 0; k < j; k++)
                 {
-                    mealsheet[i][j]=MemberCode[k];
-                    
+                    mealsheet[i][j] = MemberCode[k];
                 }
-
             }
-            if(j==0 && i>=1 && i<=mealsheetsizeRow){
-                for(int l=0;l<monthsize;l++){
-                    
-                     mealsheet[i][j]=date[i];
-                    
-                    }
+            if (j == 0 && i >= 1 && i <= mealsheetsizeRow - 1)
+            {
+                for (int l = 0; l < monthsize; l++)
+                {
+
+                    mealsheet[i][j] = date[i];
                 }
-                if(i==mealsheetsizeRow){
-                        mealsheet[i][j]=0;
-                        }
-                 
             }
-           
-
-
         }
-        
-
     }
+}
+
+int Add_Value_TO_MealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int ValueOfTheDate)
+{
+    int checkerYESNO = 1;
+    printf("\n Enter ID Number :\n ");
+    int ValueOfTheID;
+    scanf("%d", &ValueOfTheID);
+    int i, j, k;
+
+    for (i = 0; i < mealsheetsizeRow; i++)
+    {
+        for (j = 0; j < mealsheetsizeColumn; j++)
+        {
+            if (mealsheet[0][j] == ValueOfTheID)
+            {
+                if (mealsheet[i][0] == ValueOfTheDate)
+                {
+                    int value;
+                    printf("\n Enter Meal number for ID: %d \n", ValueOfTheID);
+                    scanf("%d", &value);
+                    mealsheet[i][j] = value;
+                }
+            }
+        }
+    }
+}
+int Calculation_of_sheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn]){
+    int i,j,k;
+    for (i = 0; i < mealsheetsizeColumn ; i++)
+    {
+        int sum=0;
+        for (j = 0; j <mealsheetsizeRow; j++)
+        {
+            if (i>0 && j>0 && i<mealsheetsizeColumn-1 && j<mealsheetsizeRow-1)
+            {
+               sum+=mealsheet[j][i];
+            }
+            if (i==mealsheetsizeColumn-1 && j==mealsheetsizeRow-1)
+            {
+               mealsheet[j][i]=sum;
+            }
+            
+            
+        }
+    }
+}
 
 void TBLline(int a)
 {
