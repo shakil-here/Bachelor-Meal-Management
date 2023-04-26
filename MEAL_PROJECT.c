@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <string.h>
-
 #define MAX_FILENAME_LENGTH 50
 #define MAX_MEMBER 100
 #define MEAL_RECORD_LENGTH 30
+#define MAX_BILL 10
+
 struct Mealofamonth
 {
     int days[MEAL_RECORD_LENGTH];
 };
-
 struct Member
 {
     int id;
@@ -16,14 +16,61 @@ struct Member
     char sincemember[11];
     float Balance;
     struct Mealofamonth mealofamonth;
-};
 
+};
+struct Bill
+{
+    int bID;
+    char details[30];
+    float cost;
+    
+};
 struct Sheets
 {
     struct Member members[MAX_MEMBER];
     int num_members;
-
+    struct Bill bills[MAX_BILL];
+    int num_bill;
 };
+//crerate  bill
+struct Bill create_bill()
+{
+    struct Bill bill;
+    printf("Enter Bill ID: ");
+    scanf("%d",&bill.bID);
+    printf("\nEnter Bill ammount: ");
+    scanf("%f",&bill.cost);
+    printf("\nEnter Bill Details: ");
+    scanf("%s",&bill.details);
+    
+
+    printf("\nID:%d      Details:%s       Cost:%.2f    \n",bill.bID,bill.details,bill.cost);
+    return bill;
+}
+//add bill to bill sheet
+void add_bill(struct Sheets *sheet,struct Bill bill)
+{
+    if (sheet->num_bill == MAX_BILL)
+    {
+        printf("Error: sheet is full.\n");
+        return;
+    }
+    for (int i = 0; i < sheet->num_bill; i++)
+    {
+        if (sheet->bills[i].bID == bill.bID)
+        {
+            printf("Error: Bill with ID %d already exists.\n", bill.bID);
+            return;
+        }
+    }
+    sheet->bills[sheet->num_bill] =bill;
+    sheet->num_bill++;
+    printf("Bill added to sheet.\n");
+
+}
+
+
+
 
 // Function to create a new member
 struct Member create_member()
@@ -41,8 +88,6 @@ struct Member create_member()
     {
         gets(a);
     }
-    
-     
     printf("Enter member Since(DD-MM-YYYY): ");
     fgets(member.sincemember, 11, stdin);
     member.sincemember[strcspn(member.sincemember, "\n")] = '\0';
@@ -258,11 +303,48 @@ void update_balance(struct Sheets *sheet)
     }
      printf("-------------------------------------------------------------\n");
 }
+//View Bills
+void print_bill_report(struct Sheets *sheet)
+{
+    int i, j;
+
+    // Print header row
+    printf("%10s |", "ID");
+    printf("%30s |", "Details");
+    printf("%10s |", "Amount");
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+
+    for (i = 0; i < MAX_BILL; i++)
+    {
+        printf("%10d |", sheet->bills[i].bID);
+        printf("%30s |", sheet->bills[i].details);
+        printf("%10.2f |", sheet->bills[i].cost);
+        printf("\n");
+        printf("-------------------------------------------------------------\n");
+    }
+    // Print totals row
+    printf("%-10s |", "Total ");
+    printf("%-30s |", ":");
+     float total_bill = 0;
+    for (i = 0; i < sheet->num_bill; i++)
+    {
+       total_bill += sheet->bills[i].cost;
+        
+    }printf("%10.2f |", total_bill);
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+}
+
+
+
 
 //MAIN FUNCTION
 int main()
 {
     struct Sheets sheet = {0};
+    
+
     char filename[MAX_FILENAME_LENGTH];
     printf("\nEnter filename to load sheet data from,\nOr enter 'new' to start a new sheet: ");
     scanf("%s", filename);
@@ -290,7 +372,10 @@ int main()
         printf("4. View Meal report\n");
         printf("5. View member details\n"); 
         printf("6. Add or cut Balance\n"); 
-        printf("7. Save and exit\n");
+        printf("7. Add Bill\n"); 
+        printf("8. View Bill\n"); 
+        printf("9. Save and exit\n");
+
         printf("Enter option number: ");
         int option;
         scanf("%d", &option);
@@ -328,8 +413,19 @@ int main()
             update_balance(&sheet);
             break;
         }
-        
         case 7:
+        {
+            struct Bill bill = create_bill();
+            add_bill(&sheet, bill);
+            break;
+        }
+        case 8:
+        {
+            print_bill_report(&sheet);
+            break;
+        }
+
+        case 9:
         {
             printf("Enter filename to save sheet data to: ");
             scanf("%s", filename);
@@ -339,7 +435,7 @@ int main()
                 printf("Error: could not open file %s.\n", filename);
                 return 1;
             }
-            fwrite(&sheet, sizeof(struct Sheets), 1, file);
+            fwrite((&sheet), (sizeof(struct Sheets)), 1, file);
             fclose(file);
             printf("sheet data saved to file.\n");
             return 0;
