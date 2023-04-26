@@ -1,394 +1,293 @@
 #include <stdio.h>
-void monthlist();
-void LNprint();
-int LeapYearChecker(int a);
-int MonthVAlue(int mvalue, int YearLP);
-void ShowMonthName(int a);
-void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int MemberCode[], int MemberCodeSize, int monthsize);
-void TBLline(int a);
-void TBLheader(int a);
-void Sheetprint();
-int Add_Value_TO_MealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int ValueOfTheDate);
-int Calculation_of_sheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn]);
+#include <string.h>
 
-int main()
+#define MAX_FILENAME_LENGTH 50
+#define MAX_MEMBER 100
+#define MEAL_RECORD_LENGTH 30
+struct Mealofamonth
 {
-    int inpYaer, inpMonth;
-    printf("\nEnter Year : \n");
-    scanf("%d", &inpYaer);
-    monthlist();
-    scanf("%d", &inpMonth);
-    int mchk = 0;
-    while (mchk != 1)
+    int days[MEAL_RECORD_LENGTH];
+};
+
+struct Member
+{
+    int id;
+    char name[20];
+    char dob[11];
+    struct Mealofamonth mealofamonth;
+};
+
+struct Sheets
+{
+    struct Member members[MAX_MEMBER];
+    int num_members;
+};
+
+// Function to create a new member
+struct Member create_member()
+{
+    char a[20];
+    struct Member member;
+    printf("Enter member ID: ");
+    scanf("%d", &member.id);
+    getchar();
+    printf("Enter member name: ");
+    fgets(member.name, 10, stdin);
+    member.name[strcspn(member.name, "\n")] = '\0';
+    gets(a);
+    printf("Enter member Date of Birth(DD-MM-YYYY): ");
+    fgets(member.dob, 11, stdin);
+    member.dob[strcspn(member.dob, "\n")] = '\0';
+    memset(member.mealofamonth.days, 0, sizeof(member.mealofamonth.days));
+    return member;
+}
+
+// Function to add a member  to the sheet
+void add_member(struct Sheets *sheet, struct Member member)
+{
+    if (sheet->num_members == MAX_MEMBER)
     {
-        if ((inpMonth == 1) || (inpMonth == 2) || inpMonth == 3 || inpMonth == 4 || inpMonth == 5 || inpMonth == 6 || inpMonth == 7 || inpMonth == 8 || inpMonth == 9 || inpMonth == 10 || inpMonth == 11 || inpMonth == 12)
-        {
-            printf("\nYEAR: %d    ", inpYaer);
-            ShowMonthName(inpMonth);
-            printf("\n");
-            mchk = 1;
-        }
-        else
-        {
-            int vanish;
-            printf("\nInvalid Month\nPlease Enter a Valid Month Number (1 to 12)\n");
-            scanf("%d", &inpMonth);
-            scanf("%c", &vanish);
-            continue;
-        }
+        printf("Error: Sheet is full.\n");
+        return;
     }
 
-    int MonthSize = MonthVAlue(inpMonth, inpYaer);
-
-    LNprint();
-    printf("How Many Member Do You Want? \n");
-    int NumOfMember, nummemchk = 0;
-    scanf("%d", &NumOfMember);
-    while (nummemchk != 1)
+    for (int i = 0; i < sheet->num_members; i++)
     {
-        if (NumOfMember >= 0 && NumOfMember <= 5)
+        if (sheet->members[i].id == member.id)
         {
-            printf("\nTotal Member: %d\n\n", NumOfMember);
-            nummemchk = 1;
-        }
-        else
-        {
-            int vanish;
-            printf("Invalid Member Number \nPlease Select a valid member number 1 to 5\n");
-            scanf("%d", &NumOfMember);
-            scanf("%c", &vanish);
+            printf("Error: Member with ID %d already exists.\n", member.id);
+            return;
         }
     }
+    sheet->members[sheet->num_members] = member;
+    sheet->num_members++;
+    printf("Member added to sheet.\n");
+}
 
-    printf("Enter All Member Code: \n(Member code always start with 1 .Example- 101,102)\n\n");
-    int membercode[NumOfMember];
-    for (int i = 0; i < NumOfMember; i++)
+// Function to remove a member from the sheet
+void remove_member(struct Sheets *sheet)
+{
+    printf("Enter ID of member to remove: ");
+    int id;
+    scanf("%d", &id);
+    int i, found = 0;
+    for (i = 0; i < sheet->num_members; i++)
     {
-        scanf("%d", &membercode[i]);
-    }
-
-    int column = NumOfMember + 1;
-    int row = MonthSize + 2;
-    int MealSheet[row][column];
-    InitMealSheet(row, column, MealSheet, membercode, NumOfMember, MonthSize);
-    Calculation_of_sheet(row, column, MealSheet);
-
-    TBLline(column);
-    printf("|  Date  |-- ID --\n");
-    for (int i = 0; i < row; i++)
-    {
-        TBLline(column);
-        for (int j = 0; j < column; j++)
+        if (sheet->members[i].id == id)
         {
-            if (j == 0)
+            found = 1;
+            int j;
+            for (j = i; j < sheet->num_members - 1; j++)
             {
-                printf("|%7d |", MealSheet[i][j]);
+                sheet->members[j] = sheet->members[j + 1];
             }
-            else
-                printf("%7d  |", MealSheet[i][j]);
+            sheet->num_members--;
+            printf("member removed from sheet.\n");
+            break;
         }
-        printf("\n");
     }
-    TBLline(column);
-    TBLline(column);
-    printf(" 1) Add Date-wise Value\n");
-    printf(" 2) Exit\n");
-    TBLline(column);
-    int inpvalmenu;
-    int valmenucheck = 0;
-    scanf("%d", &inpvalmenu);
-    while (valmenucheck != 1)
+    if (!found)
     {
-        if (inpvalmenu == 1 || inpvalmenu == 2)
+        printf("Error: member with ID %d not found.\n", id);
+    }
+}
+
+
+// Function to update the meal record of a member for a specific day
+void update_mealofamonth(struct Sheets *sheet)
+{
+    printf("Enter ID of Member to update Meal for: ");
+    int id;
+    scanf("%d", &id);
+    int i, found = 0;
+    for (i = 0; i < sheet->num_members; i++)
+    {
+        if (sheet->members[i].id == id)
         {
-            if (inpvalmenu == 2)
+            found = 1;
+            printf("Enter day number (1-31) to update meal for: ");
+            int day;
+            scanf("%d", &day);
+            if (day < 1 || day > MEAL_RECORD_LENGTH)
             {
+                printf("Error: invalid day number.\n");
                 break;
             }
-            else
-            {
-                int checkerYESNO;
-                do
-                {
-
-                    printf("\nEnter Date:\n ");
-                    int valuefordate;
-                    scanf("%d", &valuefordate);
-                    Add_Value_TO_MealSheet(row, column, MealSheet, valuefordate);
-                    Calculation_of_sheet(row, column, MealSheet);
-                    TBLline(column);
-                    printf("|  Date  |-- ID --\n");
-                    for (int i = 0; i < row; i++)
-                    {
-                        TBLline(column);
-                        for (int j = 0; j < column; j++)
-                        {
-                            if (j == 0)
-                            {
-                                printf("|%7d |", MealSheet[i][j]);
-                            }
-                            else
-                                printf("%7d  |", MealSheet[i][j]);
-                        }
-                        printf("\n");
-                    }
-                    TBLline(column);
-                    valmenucheck = 1;
-                    printf("\n Do You want add more?\n");
-                    printf("\n 1) Yes\n");
-                    printf("\n 2) No\n");
-                    scanf("%d", &checkerYESNO);
-
-                } while (checkerYESNO ==1);
-            }
+            printf("Enter Number of Meal for day %d: ", day);
+            int meal;
+            scanf("%d", &meal);
+            sheet->members[i].mealofamonth.days[day - 1] = meal;
+            printf("Meal updated for member %d on day %d.\n", id, day);
+            break;
         }
-        else
+    }
+    if (!found)
+    {
+        printf("Error: member not found.\n");
+    }
+}
+
+// Function to print the meal report for the sheet
+void print_meal_report(struct Sheets *sheet)
+{
+    int i, j;
+
+    // Print header row
+    printf("%10s |", "Date");
+    for (i = 0; i < sheet->num_members; i++)
+    {
+        printf("%10s |", sheet->members[i].name);
+    }
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+
+    // Print meal records for each day
+    for (i = 0; i < MEAL_RECORD_LENGTH; i++)
+    {
+        printf("%10d |", i + 1);
+        for (j = 0; j < sheet->num_members; j++)
         {
-            int vanishq;
-            printf("Invalid Member Number \nPlease Select a valid member number 1 to 5\n");
-            scanf("%d", &inpvalmenu);
-            scanf("%c", &vanishq);
+            printf("%10d |", sheet->members[j].mealofamonth.days[i]);
+        }
+        printf("\n");
+        printf("-------------------------------------------------------------\n");
+    }
+    // Print totals row
+    printf("%-10s |", "Total:");
+    for (i = 0; i < sheet->num_members; i++)
+    {
+        int total_meal = 0;
+        for (j = 0; j < MEAL_RECORD_LENGTH; j++)
+        {
+            total_meal += sheet->members[i].mealofamonth.days[j];
+        }
+        printf("%10d |", total_meal);
+    }
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+}
+
+// VIEW DETAILS
+void view_member_details(struct Sheets *sheet)
+{
+    printf("Enter ID of member to view details for: ");
+    int id;
+    scanf("%d", &id);
+    int i, found = 0;
+    printf("-------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------\n");
+
+    for (i = 0; i < sheet->num_members; i++)
+    {
+        if (sheet->members[i].id == id)
+        {
+            found = 1;
+            printf("Member ID: %d\n", sheet->members[i].id);
+            printf("Member Name: %s\n", sheet->members[i].name);
+            printf("Date of Birth: %s\n", sheet->members[i].dob);
+            int total_meal = 0;
+            for (int j = 0; j < MEAL_RECORD_LENGTH; j++)
+            {
+                total_meal += sheet->members[i].mealofamonth.days[j];
+            }
+            printf("Total Meal: %d\n", total_meal);
+            break;
+        
         }
     }
+    if (!found)
+    {
+        printf("Error: member not found.\n");
+    }
+    printf("-------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------\n");
 }
 
-int LeapYearChecker(int a)
-{
-    if (((a % 4 == 0) && (a % 100 != 0)) || (a % 400 == 0))
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-void ShowMonthName(int a)
-{
-    switch (a)
-    {
-    case 1:
-        printf("Month: JANUARY");
-        break;
-    case 2:
-        printf("Month: FEBRUARY");
-        break;
-    case 3:
-        printf("Month: MARCH");
-        break;
-    case 4:
-        printf("Month: APRIL");
-        break;
-    case 5:
-        printf("Month: MAY");
-        break;
-    case 6:
-        printf("Month: JUNE");
-        break;
-    case 7:
-        printf("Month: JULY");
-        break;
-    case 8:
-        printf("Month: AUGUST");
-        break;
-    case 9:
-        printf("Month: SEPTEMBER");
-        break;
-    case 10:
-        printf("Month: OCTBER");
-        break;
-    case 11:
-        printf("Month: NOVEMBER");
-        break;
-    case 12:
-        printf("Month: DECEMBER");
-        break;
 
+//MAIN FUNCTION
+int main()
+{
+    struct Sheets sheet = {0};
+    char filename[MAX_FILENAME_LENGTH];
+    printf("Enter filename to load sheet data from,\nOr enter 'new' to start a new sheet: ");
+    scanf("%s", filename);
+    
+
+    if (strcmp(filename, "new") != 0)
+    {
+        FILE *file = fopen(filename, "rb");
+        if (!file)
+        {
+            printf("Error: could not open file %s.\n", filename);
+            return 1;
+        }
+        fread(&sheet, sizeof(struct Sheets), 1, file);
+        fclose(file);
+        printf("sheet data loaded from file.\n");
+    }
+
+    while (1)
+    {
+        printf("\n");
+        printf("1. Add member\n");
+        printf("2. Remove member\n");
+        printf("3. Update Meal\n");
+        printf("4. View Meal report\n");
+        printf("5. View member details\n"); 
+        printf("6. Save and exit\n");
+        printf("Enter option number: ");
+        int option;
+        scanf("%d", &option);
+
+        switch (option)
+        {
+        case 1:
+        {
+            struct Member member = create_member();
+            add_member(&sheet, member);
+            break;
+        }
+        case 2:
+        {
+            remove_member(&sheet);
+            break;
+        }
+        case 3:
+        {
+            update_mealofamonth(&sheet);
+            break;
+        }
+        case 4:
+        {
+            print_meal_report(&sheet);
+            break;
+        }
+        case 5:
+        { 
+            view_member_details(&sheet);
+            break;
+        }
+        case 6:
+        {
+            printf("Enter filename to save sheet data to: ");
+            scanf("%s", filename);
+            FILE *file = fopen(filename, "wb");
+            if (!file)
+            {
+                printf("Error: could not open file %s.\n", filename);
+                return 1;
+            }
+            fwrite(&sheet, sizeof(struct Sheets), 1, file);
+            fclose(file);
+            printf("sheet data saved to file.\n");
+            return 0;
+        
+        }
     default:
+    {
+        printf("Error: invalid option.\n");
         break;
+    }
     }
 }
-int MonthVAlue(int mvalue, int YearLP)
-{
-    int msize;
-    switch (mvalue)
-    {
-    case 1:
-        msize = 31;
-        break;
-    case 2:
-        if (LeapYearChecker(YearLP) == 1)
-        {
-            msize = 29;
-        }
-        else
-        {
-            msize = 28;
-        }
-
-        break;
-    case 3:
-        msize = 31;
-        break;
-    case 4:
-        msize = 30;
-        break;
-    case 5:
-        msize = 31;
-        break;
-    case 6:
-        msize = 30;
-        break;
-    case 7:
-        msize = 31;
-        break;
-    case 8:
-        msize = 31;
-        break;
-    case 9:
-        msize = 30;
-        break;
-    case 10:
-        msize = 31;
-        break;
-    case 11:
-        msize = 30;
-        break;
-    case 12:
-        msize = 31;
-        break;
-
-    default:
-        break;
-    }
-    return msize;
-}
-void InitMealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int MemberCode[], int MemberCodeSize, int monthsize)
-{
-
-    int date[monthsize + 1];
-    int dates = 0;
-    for (int i = 0; i <= monthsize; i++)
-    {
-        date[i] = dates;
-        dates++;
-    }
-
-    int i, j, k;
-    for (i = 0; i < mealsheetsizeRow; i++)
-    {
-        for (j = 0; j < mealsheetsizeColumn; j++)
-        {
-
-            mealsheet[i][j] = 0;
-        }
-    }
-    for (i = 0; i < mealsheetsizeRow; i++)
-    {
-        for (j = 0; j < mealsheetsizeColumn; j++)
-        {
-            if (i == 0 & j >= 1)
-            {
-                for (k = 0; k < j; k++)
-                {
-                    mealsheet[i][j] = MemberCode[k];
-                }
-            }
-            if (j == 0 && i >= 1 && i <= mealsheetsizeRow - 1)
-            {
-                for (int l = 0; l < monthsize; l++)
-                {
-
-                    mealsheet[i][j] = date[i];
-                }
-            }
-        }
-    }
-}
-
-int Add_Value_TO_MealSheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn], int ValueOfTheDate)
-{
-    int checkerYESNO = 1;
-    printf("\n Enter ID Number :\n ");
-    int ValueOfTheID;
-    scanf("%d", &ValueOfTheID);
-    int i, j, k;
-
-    for (i = 0; i < mealsheetsizeRow; i++)
-    {
-        for (j = 0; j < mealsheetsizeColumn; j++)
-        {
-            if (mealsheet[0][j] == ValueOfTheID)
-            {
-                if (mealsheet[i][0] == ValueOfTheDate)
-                {
-                    int value;
-                    printf("\n Enter Meal number for ID: %d \n", ValueOfTheID);
-                    scanf("%d", &value);
-                    mealsheet[i][j] = value;
-                }
-            }
-        }
-    }
-}
-int Calculation_of_sheet(int mealsheetsizeRow, int mealsheetsizeColumn, int mealsheet[][mealsheetsizeColumn]){
-    int i,j,k;
-    for (i = 0; i < mealsheetsizeColumn ; i++)
-    {
-        int sum=0;
-        for (j = 0; j <mealsheetsizeRow; j++)
-        {
-            if (i>0 && j>0 && i<mealsheetsizeColumn-1 && j<mealsheetsizeRow-1)
-            {
-               sum+=mealsheet[j][i];
-            }
-            if (i==mealsheetsizeColumn-1 && j==mealsheetsizeRow-1)
-            {
-               mealsheet[j][i]=sum;
-            }
-            
-            
-        }
-    }
-}
-
-void TBLline(int a)
-{
-    switch (a)
-    {
-    case 2:
-        printf("--------------------\n");
-        break;
-    case 3:
-        printf("------------------------------\n");
-        break;
-    case 4:
-        printf("----------------------------------------\n");
-        break;
-    case 5:
-        printf("--------------------------------------------------\n");
-        break;
-    case 6:
-        printf("------------------------------------------------------------\n");
-        break;
-    case 7:
-        printf("----------------------------------------------------------------------\n");
-        break;
-    default:
-        break;
-    }
-}
-void monthlist()
-{
-    printf("Enter Month ( 1-12 DIGIT ONLY): \n");
-    printf("-------------------------------------\n");
-    printf(" | JAN-- 1  |  MAY-- 5  |  SEP--09 | \n");
-    printf(" | FEB-- 2  |  JUN-- 6  |  OCT--10 | \n");
-    printf(" | MAR-- 3  |  JUL-- 7  |  NOV--11 | \n");
-    printf(" | APR-- 4  |  AUG-- 8  |  DEC--12 | \n");
-    printf("-------------------------------------\n");
-}
-void LNprint()
-{
-    printf("_______________________________________\n");
 }
