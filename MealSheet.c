@@ -34,7 +34,10 @@ struct Member create_member()
     printf("Enter member name: ");
     fgets(member.name, 10, stdin);
     member.name[strcspn(member.name, "\n")] = '\0';
-    gets(a);
+   if (sizeof(member.name)>10)
+    {
+        gets(a);
+    }
     printf("Enter member Date of Birth(DD-MM-YYYY): ");
     fgets(member.dob, 11, stdin);
     member.dob[strcspn(member.dob, "\n")] = '\0';
