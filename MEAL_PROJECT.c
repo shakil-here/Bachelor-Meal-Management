@@ -365,7 +365,7 @@ void print_bill_report(struct Sheets *sheet)
     printf("\n");
     printf("-------------------------------------------------------------\n");
 
-    for (i = 0; i < MAX_BILL; i++)
+    for (i = 0; i < sheet->num_bill; i++)
     {   
        
          printf("%10d |", sheet->bills[i].bID);
@@ -402,7 +402,7 @@ void print_mealcost_report(struct Sheets *sheet)
     printf("\n");
     printf("-------------------------------------------------------------\n");
 
-    for (i = 0; i <sheet->num_mealcost; i++)
+    for (i = 0; i < sheet->num_mealcost; i++)
     {   
         
          printf("%10d |", sheet->mealcosts[i].mcID);
