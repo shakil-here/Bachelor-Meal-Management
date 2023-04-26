@@ -4,6 +4,7 @@
 #define MAX_MEMBER 100
 #define MEAL_RECORD_LENGTH 30
 #define MAX_BILL 10
+#define MAX_MEAL_COST 30
 
 struct Mealofamonth
 {
@@ -25,13 +26,61 @@ struct Bill
     float cost;
     
 };
+struct MealCost{
+    int mcID;
+    char mcdetails[30];
+    float mcost;
+
+};
 struct Sheets
 {
     struct Member members[MAX_MEMBER];
     int num_members;
     struct Bill bills[MAX_BILL];
     int num_bill;
+    struct MealCost mealcosts[MAX_MEAL_COST];
+    int num_mealcost;
 };
+//Create Meal Cost
+struct MealCost create_mealcost()
+{
+    struct MealCost mealcost;
+    printf("Enter Meal Cost ID: ");
+    scanf("%d",&mealcost.mcID);
+    printf("\nEnter Meal Cost ammount: ");
+    scanf("%f",&mealcost.mcost);
+    printf("\nEnter Meal Cost Details: ");
+    scanf("%s",&mealcost.mcdetails);
+     printf("\n");
+        printf("-------------------------------------------------------------\n");
+    printf("\nID:      %d\nDetails:%s\nCost:%.2f\n",mealcost.mcID,mealcost.mcdetails,mealcost.mcost);
+        printf("-------------------------------------------------------------\n");
+    return mealcost;
+
+}
+//Add Meal cost to sheet
+void add_mealcost(struct Sheets *sheet, struct MealCost mealcost)
+{
+    if (sheet->num_mealcost == MAX_MEAL_COST)
+    {
+        printf("Error: sheet is full.\n");
+        return;
+    }
+    for (int i = 0; i < sheet->num_mealcost; i++)
+    {
+        if (sheet->mealcosts[i].mcID == mealcost.mcID)
+        {
+            printf("Error: Meal Cost with ID %d already exists.\n", mealcost.mcID);
+            return;
+        }
+    }
+    sheet->mealcosts[sheet->num_mealcost] =mealcost;
+    sheet->num_mealcost++;
+    printf("Meal cost added to sheet.\n");
+
+}
+
+
 //crerate  bill
 struct Bill create_bill()
 {
@@ -42,9 +91,10 @@ struct Bill create_bill()
     scanf("%f",&bill.cost);
     printf("\nEnter Bill Details: ");
     scanf("%s",&bill.details);
-    
-
-    printf("\nID:%d      Details:%s       Cost:%.2f    \n",bill.bID,bill.details,bill.cost);
+     printf("\n");
+        printf("-------------------------------------------------------------\n");
+    printf("\nID:      %d\nDetails:%s\nCost:%.2f\n",bill.bID,bill.details,bill.cost);
+        printf("-------------------------------------------------------------\n");
     return bill;
 }
 //add bill to bill sheet
@@ -316,18 +366,22 @@ void print_bill_report(struct Sheets *sheet)
     printf("-------------------------------------------------------------\n");
 
     for (i = 0; i < MAX_BILL; i++)
-    {
-        printf("%10d |", sheet->bills[i].bID);
+    {   
+       
+         printf("%10d |", sheet->bills[i].bID);
         printf("%30s |", sheet->bills[i].details);
         printf("%10.2f |", sheet->bills[i].cost);
         printf("\n");
         printf("-------------------------------------------------------------\n");
+    
+       
+        
     }
     // Print totals row
     printf("%-10s |", "Total ");
     printf("%-30s |", ":");
      float total_bill = 0;
-    for (i = 0; i < sheet->num_bill; i++)
+    for (i = 0; i < MAX_BILL; i++)
     {
        total_bill += sheet->bills[i].cost;
         
@@ -336,7 +390,42 @@ void print_bill_report(struct Sheets *sheet)
     printf("-------------------------------------------------------------\n");
 }
 
+// print meal cost report
+void print_mealcost_report(struct Sheets *sheet)
+{
+    int i, j;
 
+    // Print header row
+    printf("%10s |", "ID");
+    printf("%30s |", "Details");
+    printf("%10s |", "Amount");
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+
+    for (i = 0; i < MAX_MEAL_COST; i++)
+    {   
+        
+         printf("%10d |", sheet->mealcosts[i].mcID);
+        printf("%30s |", sheet->mealcosts[i].mcdetails);
+        printf("%10.2f |", sheet->mealcosts[i].mcost);
+        printf("\n");
+        printf("-------------------------------------------------------------\n");
+    
+       
+        
+    }
+    // Print totals row
+    printf("%-10s |", "Total ");
+    printf("%-30s |", ":");
+     float total_mealcost = 0;
+    for (i = 0; i < MAX_BILL; i++)
+    {
+       total_mealcost += sheet->mealcosts[i].mcost;
+        
+    }printf("%10.2f |", total_mealcost);
+    printf("\n");
+    printf("-------------------------------------------------------------\n");
+}
 
 
 //MAIN FUNCTION
@@ -374,7 +463,9 @@ int main()
         printf("6. Add or cut Balance\n"); 
         printf("7. Add Bill\n"); 
         printf("8. View Bill\n"); 
-        printf("9. Save and exit\n");
+        printf("9. Add Meal Cost\n");
+        printf("10. View Meal Cost Report\n");
+        printf("11. Save and exit\n");
 
         printf("Enter option number: ");
         int option;
@@ -424,8 +515,19 @@ int main()
             print_bill_report(&sheet);
             break;
         }
-
         case 9:
+        {
+            struct MealCost mealcost = create_mealcost();
+            add_mealcost(&sheet, mealcost);
+            break;
+        }
+         case 10:
+        {
+            print_mealcost_report(&sheet);
+            break;
+        }
+
+        case 11:
         {
             printf("Enter filename to save sheet data to: ");
             scanf("%s", filename);
