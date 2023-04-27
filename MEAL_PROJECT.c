@@ -16,6 +16,7 @@ struct Member
     char name[20];
     char sincemember[11];
     float Balance;
+    float bill_per_person;
     struct Mealofamonth mealofamonth;
 
 };
@@ -40,6 +41,8 @@ struct Sheets
     int num_bill;
     struct MealCost mealcosts[MAX_MEAL_COST];
     int num_mealcost;
+    float total_ubills;
+    int total_meals;
 };
 //Create Meal Cost
 struct MealCost create_mealcost()
@@ -113,7 +116,14 @@ void add_bill(struct Sheets *sheet,struct Bill bill)
             return;
         }
     }
+    int i;
     sheet->bills[sheet->num_bill] =bill;
+    sheet->total_ubills=0;
+     for (i = 0; i < MAX_BILL; i++)
+    {
+       sheet->total_ubills += sheet->bills[i].cost;
+        
+    }
     sheet->num_bill++;
     printf("Bill added to sheet.\n");
 
@@ -221,9 +231,25 @@ void update_mealofamonth(struct Sheets *sheet)
             scanf("%d", &meal);
             sheet->members[i].mealofamonth.days[day - 1] = meal;
             printf("Meal updated for member %d on day %d.\n", id, day);
+
+            //
+            sheet->total_meals= 0;
+              for ( int k = 0; k < sheet->num_members; k++)
+                {
+                    
+                    for (int j = 0; j < MEAL_RECORD_LENGTH; j++)
+                    {
+                        sheet->total_meals+= sheet->members[k].mealofamonth.days[j];
+                    }
+                        
+                 
+                 }
+                 //printf("Total Meal : %10d \n", sheet->total_meals);
+            //
             break;
         }
     }
+
     if (!found)
     {
         printf("Error: member not found.\n");
@@ -242,7 +268,7 @@ void print_meal_report(struct Sheets *sheet)
         printf("%10s |", sheet->members[i].name);
     }
     printf("\n");
-    printf("-------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------------------\n");
 
     // Print meal records for each day
     for (i = 0; i < MEAL_RECORD_LENGTH; i++)
@@ -253,7 +279,7 @@ void print_meal_report(struct Sheets *sheet)
             printf("%10d |", sheet->members[j].mealofamonth.days[i]);
         }
         printf("\n");
-        printf("-------------------------------------------------------------\n");
+        printf("--------------------------------------------------------------------------\n");
     }
     // Print totals row
     printf("%-10s |", "Total:");
@@ -266,8 +292,21 @@ void print_meal_report(struct Sheets *sheet)
         }
         printf("%10d |", total_meal);
     }
+    sheet->total_meals= 0;
+              for ( int k = 0; k < sheet->num_members; k++)
+                {
+                    
+                    for (int j = 0; j < MEAL_RECORD_LENGTH; j++)
+                    {
+                        sheet->total_meals+= sheet->members[k].mealofamonth.days[j];
+                    }
+                        
+                 
+                 }
     printf("\n");
-    printf("-------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------------------\n");
+    printf("Total Meals : %10d\n", sheet->total_meals);
+    printf("-------------------------------------------------------------------------\n");
 }
 
 // VIEW DETAILS
@@ -289,6 +328,7 @@ void view_member_details(struct Sheets *sheet)
             printf("Member Name: %s\n", sheet->members[i].name);
             printf("Member Since: %s\n", sheet->members[i].sincemember);
             printf("BALANCE:   %.2f TK BDT.\n", sheet->members[i].Balance);
+            printf("Total Utility Bill:  %.2f\n",(sheet->total_ubills/sheet->num_members));
             int total_meal = 0;
             for (int j = 0; j < MEAL_RECORD_LENGTH; j++)
             {
@@ -380,12 +420,8 @@ void print_bill_report(struct Sheets *sheet)
     // Print totals row
     printf("%-10s |", "Total ");
     printf("%-30s |", ":");
-     float total_bill = 0;
-    for (i = 0; i < MAX_BILL; i++)
-    {
-       total_bill += sheet->bills[i].cost;
-        
-    }printf("%10.2f |", total_bill);
+     //float total_bill = 0;
+   printf("%10.2f |", sheet->total_ubills);
     printf("\n");
     printf("-------------------------------------------------------------\n");
 }
