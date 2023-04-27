@@ -221,6 +221,18 @@ void remove_member(struct Sheets *sheet)
                 sheet->members[j] = sheet->members[j + 1];
             }
             sheet->num_members--;
+            sheet->total_meals=0;
+           
+    for (int i = 0; i < sheet->num_members; i++)
+            {
+                sheet->total_meals+=sheet->members[i].total_indv_meal;
+                sheet->members[i].bill_per_person=(sheet->total_ubills / sheet->num_members);
+                sheet->members[i].indv_meal_cost=(sheet->members[i].total_indv_meal*sheet->meal_rate);
+                sheet->members[i].maid_bill=MAIDBILL;
+                sheet->members[i].indv_total_cost=(sheet->members[i].indv_meal_cost+sheet->members[i].maid_bill+sheet->members[i].bill_per_person);
+            }
+             sheet->meal_rate = 0;
+    sheet->meal_rate = (sheet->total_meal_cost / sheet->total_meals);
             printf("member removed from sheet.\n");
             break;
         }
