@@ -171,6 +171,12 @@ struct Member create_member()
     fgets(member.sincemember, 11, stdin);
     member.sincemember[strcspn(member.sincemember, "\n")] = '\0';
     memset(member.mealofamonth.days, 0, sizeof(member.mealofamonth.days));
+    member.Balance=0;
+    member.bill_per_person=0;
+    member.indv_meal_cost=0;
+    member.indv_total_cost=0;
+    member.total_indv_meal=0;
+    
     return member;
 }
 
@@ -550,6 +556,7 @@ int main()
 
     while (1)
     {
+        
         printf("\n");
         printf("1. Add member\n");
         printf("2. Remove member\n");
