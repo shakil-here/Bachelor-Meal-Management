@@ -40,9 +40,9 @@ Enter the number of the option you want to select and press Enter. Follow the pr
 
 ## Author :pencil:
 
-Meal Tracker was created by Shakil Hossain :sunglasses:.
+Meal Tracker was created by <b>Shakil Hossain :sunglasses:.
 
-Mail me : shakil.uiu.cse@gmail.com
+
 
 ## License :memo:
 
