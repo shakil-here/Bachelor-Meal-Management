@@ -125,8 +125,10 @@ void welcome_message()
     printf("|----------------------------------------------------------|\n");
     printf("|----------------------------------------------------------|\n");
     printf("|                                                          |\n");
-    printf("|                 MEAL TRACKER  SYSTEM                     |\n");
+    printf("|                   MEAL TRACKER  SYSTEM                   |\n");
     printf("|                                                          |\n");
+    printf("|----------------------------------------------------------|\n");
+    printf("|                         welcome                          |\n");
     printf("|----------------------------------------------------------|\n");
     printf("|----------------------------------------------------------|\n");
 }
@@ -143,8 +145,8 @@ void end_message()
     printf("|                                                          |\n");
     printf("|----------------------------------------------------------|\n");
     printf("|----------------------------------------------------------|\n");
-    printf("| A Project by  :  Md Shakil Hossain                       |\n");
-    printf("| Email            :   mhossain223670@bscse.uiu.ac.bd      |\n");
+    printf("| A Project by     :  Md Shakil Hossain                    |\n");
+    printf("| Email            :  mhossain223670@bscse.uiu.ac.bd       |\n");
     printf("| Github           :  www.github.com/shakil-here           |\n");
     printf("|----------------------------------------------------------|\n");
     printf("|----------------------------------------------------------|\n");
@@ -305,19 +307,20 @@ struct Member create_member()
 {
     char a[20];
     struct Member member;
-    printf("------------------------------------------------\n");
-    printf("Enter member ID: ");
+    printf(":::::ADDING NEW MEMBER:::::\n");
+    printf("+------------------------------------------------|\n");
+    printf("| Enter member ID: ");
     scanf("%d", &member.id);
     getchar();
-    printf("------------------------------------------------\n");
-    printf("Enter member name: ");
+    printf("|------------------------------------------------|\n");
+    printf("| Enter member name: ");
     fgets(member.name, 20, stdin);
     member.name[strcspn(member.name, "\n")] = '\0';
-    puts("");
-    printf("------------------------------------------------\n");
-    printf("Enter member mobile number: ");
+    // puts("|");
+    printf("|------------------------------------------------|\n");
+    printf("| Enter member mobile number: ");
     fgets(member.mobile_number, 12, stdin);
-    printf("------------------------------------------------\n");
+    printf("|------------------------------------------------|\n\n");
     member.mobile_number[strcspn(member.mobile_number, "\n")] = '\0';
     memset(member.mealofamonth.days, 0, sizeof(member.mealofamonth.days));
     member.Balance = 0;
@@ -355,7 +358,7 @@ void add_member(struct Sheets *sheet, struct Member member)
         sheet->members[i].maid_bill = MAIDBILL;
         sheet->members[i].indv_total_cost = (sheet->members[i].indv_meal_cost + sheet->members[i].maid_bill + sheet->members[i].bill_per_person);
     }
-    printf("Member added to sheet.\n");
+    printf("Member added to sheet.\n\n");
 }
 
 // Function to remove a member from the sheet
@@ -388,7 +391,7 @@ void remove_member(struct Sheets *sheet)
             }
             sheet->meal_rate = 0;
             sheet->meal_rate = (sheet->total_meal_cost / sheet->total_meals);
-            printf("member removed from sheet.\n");
+            printf("Member removed from sheet.\n");
             break;
         }
     }
@@ -422,7 +425,7 @@ void update_mealofamonth(struct Sheets *sheet)
             int meal;
             scanf("%d", &meal);
             sheet->members[i].mealofamonth.days[day - 1] = meal;
-            printf("Meal updated for member %d on day %d.\n", id, day);
+            printf("Meal updated for  %d on day %d.\n\n", id, day);
             for (i = 0; i < sheet->num_members; i++)
             {
                 sheet->members[i].total_indv_meal = 0;
@@ -464,7 +467,7 @@ void update_mealofamonth(struct Sheets *sheet)
 void print_meal_report(struct Sheets *sheet)
 {
     int i, j;
-
+    printf("\n:::::VIEWING MEAL REPORT:::::\n");
     // Print header row
     printf("\n");
     print_line_meal_report(sheet->num_members);
@@ -519,6 +522,7 @@ void print_meal_report(struct Sheets *sheet)
 // print all info
 void print_all_info(struct Sheets *sheet)
 {
+    printf("\n:::::VIEWING ALL MEMBERS DETAILS:::::");
     // Print header row
     printf("\n");
     print_line_all_report(sheet->num_members);
@@ -702,8 +706,11 @@ void update_balance(struct Sheets *sheet)
 void print_bill_report(struct Sheets *sheet)
 {
     int i, j;
+    printf(":::::VIEWING BILL REPORT:::::\n");
 
     // Print header row
+    printf("-------------------------------------------------------------\n");
+
     printf("%10s |", "ID");
     printf("%30s |", "Details");
     printf("%10s |", "Amount");
@@ -732,13 +739,15 @@ void print_bill_report(struct Sheets *sheet)
 void print_mealcost_report(struct Sheets *sheet)
 {
     int i, j;
+    printf(":::::VIEWING MEAL COST REPORT:::::\n");
 
     // Print header row
+    printf("------------------------------------------------------------\n");
     printf("%10s |", "ID");
     printf("%30s |", "Details");
     printf("%10s |", "Amount");
     printf("\n");
-    printf("-------------------------------------------------------------\n");
+    printf("------------------------------------------------------------\n");
 
     for (i = 0; i < sheet->num_mealcost; i++)
     {
@@ -755,7 +764,7 @@ void print_mealcost_report(struct Sheets *sheet)
 
     printf("%10.2f |", sheet->total_meal_cost);
     printf("\n");
-    printf("-------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------\n\n");
 }
 
 // Sorting by meal (min to max)
@@ -839,7 +848,9 @@ int main()
     welcome_message();
 
     char filename[MAX_FILENAME_LENGTH];
-    printf("\nEnter filename to load sheet data from,\nOr enter 'new' to start a new sheet: ");
+    printf("| Please enter filename to load  data from                 |\n");
+    printf("| Or enter 'new' to start a new sheet                      |\n");
+    printf("|----------------------------------------------------------|\n|  ");
     scanf("%s", filename);
 
     if (strcmp(filename, "new") != 0)
@@ -852,7 +863,9 @@ int main()
         }
         fread(&sheet, sizeof(struct Sheets), 1, file);
         fclose(file);
-        printf("sheet data loaded from file.\n");
+        printf("|----------------------------------------------------------|\n");
+        printf("|                 Data loaded from '%s'                   \n", filename);
+        printf("|----------------------------------------------------------|");
     }
 
     while (1)
@@ -876,65 +889,67 @@ int main()
         case 1:
         {
             struct Member member = create_member();
-            
 
             int case_cntrl = 1;
             while (case_cntrl == 1)
             {
-               add_member(&sheet, member);
+                add_member(&sheet, member);
                 printf("Enter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data\n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
-           
 
             break;
         }
         case 2:
         {
-           
+
             int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 remove_member(&sheet);
 
-                printf("Enter 0 to return main menu: \n");
+                printf("\nEnter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
-           
+
             break;
         }
         case 3:
         {
-           
-           int case_cntrl = 1;
+
+            int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 update_mealofamonth(&sheet);
@@ -944,14 +959,16 @@ int main()
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -959,8 +976,8 @@ int main()
         }
         case 4:
         {
-           
-           int case_cntrl = 1;
+
+            int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 print_meal_report(&sheet);
@@ -970,14 +987,16 @@ int main()
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -995,14 +1014,16 @@ int main()
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1010,53 +1031,57 @@ int main()
         }
         case 6:
         {
-            
+
             int case_cntrl = 1;
             while (case_cntrl == 1)
             {
-               update_balance(&sheet);
+                update_balance(&sheet);
                 printf("Enter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
-            
+
             break;
         }
         case 7:
         {
-            
-           int case_cntrl = 1;
+
+            int case_cntrl = 1;
             while (case_cntrl == 1)
             {
-               struct Bill bill = create_bill();
-            add_bill(&sheet, bill);
+                struct Bill bill = create_bill();
+                add_bill(&sheet, bill);
                 printf("Enter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1064,7 +1089,7 @@ int main()
         }
         case 8:
         {
-           
+
             int case_cntrl = 1;
             while (case_cntrl == 1)
             {
@@ -1075,14 +1100,16 @@ int main()
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1091,26 +1118,27 @@ int main()
         case 9:
         {
 
-           
-           int case_cntrl = 1;
+            int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 struct MealCost mealcost = create_mealcost();
-            add_mealcost(&sheet, mealcost);
+                add_mealcost(&sheet, mealcost);
                 printf("Enter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1119,8 +1147,7 @@ int main()
         case 10:
         {
 
-           
-           int case_cntrl = 1;
+            int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 print_mealcost_report(&sheet);
@@ -1130,14 +1157,16 @@ int main()
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1168,7 +1197,9 @@ int main()
                     break;
 
                 default:
-                    printf("Error: invalid option.\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1176,27 +1207,27 @@ int main()
         }
         case 12:
         {
-           
-
 
             int case_cntrl = 1;
             while (case_cntrl == 1)
             {
                 print_all_info(&sheet);
-                printf("Enter 0 to return main menu: \n");
+                printf("\nEnter 0 to return main menu: \n");
                 printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
                 case 0:
-                    case_cntrl=0;
+                    case_cntrl = 0;
                     break;
                 case 1:
                     return 0;
                     break;
-                
+
                 default:
-                    printf("Invalid option\n");
+                    printf("|----------------------------------------------------------|\n");
+                    printf("|                        Invalid Option.                   |\n");
+                    printf("|----------------------------------------------------------|\n");
                     break;
                 }
             }
@@ -1214,14 +1245,20 @@ int main()
             }
             fwrite((&sheet), (sizeof(struct Sheets)), 1, file);
             fclose(file);
-            printf("sheet data saved to file.\n");
+            printf("\n");
+             printf("|----------------------------------------------------------|\n");
+            printf("|              Data saved to file '%s'.                   \n", filename);                 
+            printf("|----------------------------------------------------------|\n");
+            
             printf("\n");
             end_message();
             return 0;
         }
         default:
         {
-            printf("Error: invalid option.\n");
+            printf("|----------------------------------------------------------|\n");
+            printf("|                        Invalid Option.                   |\n");
+            printf("|----------------------------------------------------------|\n");
             break;
         }
         }
