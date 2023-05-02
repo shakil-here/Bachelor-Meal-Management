@@ -15,7 +15,7 @@ struct Member
 {
     int id;
     char name[20];
-    char sincemember[11];
+    char mobile_number[12];
     float Balance;
     float bill_per_person;
     struct Mealofamonth mealofamonth;
@@ -315,10 +315,10 @@ struct Member create_member()
     member.name[strcspn(member.name, "\n")] = '\0';
     puts("");
     printf("------------------------------------------------\n");
-    printf("Enter member Since(DD-MM-YYYY): ");
-    fgets(member.sincemember, 11, stdin);
+    printf("Enter member mobile number: ");
+    fgets(member.mobile_number, 12, stdin);
     printf("------------------------------------------------\n");
-    member.sincemember[strcspn(member.sincemember, "\n")] = '\0';
+    member.mobile_number[strcspn(member.mobile_number, "\n")] = '\0';
     memset(member.mealofamonth.days, 0, sizeof(member.mealofamonth.days));
     member.Balance = 0;
     member.bill_per_person = 0;
@@ -623,7 +623,7 @@ void view_member_details(struct Sheets *sheet)
             found = 1;
             printf("Member ID          : %10d\n", sheet->members[i].id);
             printf("Member Name        : %10s\n", sheet->members[i].name);
-            printf("Member Since       : %10s\n", sheet->members[i].sincemember);
+            printf("Mobile Number      : %11s\n", sheet->members[i].mobile_number);
             printf("Meal Rate          : %10.2f TK BDT.\n", sheet->meal_rate);
             printf("Total Meal         : %10d \n", sheet->members[i].total_indv_meal);
             printf("Total Meal Cost    : %10.2f TK BDT.\n", sheet->members[i].indv_meal_cost);
@@ -883,7 +883,7 @@ int main()
             {
                add_member(&sheet, member);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data\n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -912,7 +912,7 @@ int main()
                 remove_member(&sheet);
 
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -939,7 +939,7 @@ int main()
             {
                 update_mealofamonth(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -965,7 +965,7 @@ int main()
             {
                 print_meal_report(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -990,7 +990,7 @@ int main()
             {
                 view_member_details(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1016,7 +1016,7 @@ int main()
             {
                update_balance(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1044,7 +1044,7 @@ int main()
                struct Bill bill = create_bill();
             add_bill(&sheet, bill);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1070,7 +1070,7 @@ int main()
             {
                 print_bill_report(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1098,7 +1098,7 @@ int main()
                 struct MealCost mealcost = create_mealcost();
             add_mealcost(&sheet, mealcost);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1125,7 +1125,7 @@ int main()
             {
                 print_mealcost_report(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
@@ -1184,7 +1184,7 @@ int main()
             {
                 print_all_info(&sheet);
                 printf("Enter 0 to return main menu: \n");
-                printf("Enter 1 to Exit \n");
+                printf("Enter 1 to Exit Without Save Data \n");
                 scanf("%d", &case_cntrl);
                 switch (case_cntrl)
                 {
