@@ -20,7 +20,7 @@ Meal Tracker offers the following features:
 
 ## How to Use :question:
 
-When you run Meal Tracker, you will be presented with a menu of options:
+When you run Meal Tracker,You can use my `may23` file . you will be presented with a menu of options:
 
 1. :family_man_man_boy: Add member
 2. :no_entry: Remove member
