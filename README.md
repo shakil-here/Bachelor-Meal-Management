@@ -1,4 +1,4 @@
-github: Link:https://github.com/shakil-here/Meal-Tracker
+
 
 # Meal Tracker :fork_and_knife: :money_with_wings: :calendar:
 
