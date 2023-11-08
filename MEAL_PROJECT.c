@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#define MAX_FILENAME_LENGTH 50
-#define MAX_MEMBER 100
+#define MAX_FILENAME_LENGTH 300
+#define MAX_MEMBER 500
 #define MEAL_RECORD_LENGTH 30
 #define MAX_BILL 10
-#define MAX_MEAL_COST 30
+#define MAX_MEAL_COST 300
 #define MAIDBILL 500
 
 struct Mealofamonth
@@ -50,7 +50,6 @@ struct Sheets
     float meal_rate;
 };
 
-// Line print for meal Report
 void print_line_meal_report(int num_members)
 {
     if (num_members == 1)
